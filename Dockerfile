@@ -1,17 +1,18 @@
-#
-# Build stage
-#
-FROM maven:3.8.3-openjdk-17 AS build
+
+FROM eclipse-temurin:17-jre-alpine AS builder
 WORKDIR /app
+
 COPY pom.xml .
 COPY src ./src
-RUN mvn clean install
 
-#
-# Package stage
-#
-FROM eclipse-temurin:17-jdk
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-COPY --from=build /app/target/demo-0.0.1-SNAPSHOT.jar demo.jar
+
+COPY --from=builder /app/target/*.jar app.jar
+
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","demo.jar"]
+
+# Run the application
+ENTRYPOINT ["java","-jar","app.jar"]
