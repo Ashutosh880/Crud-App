@@ -28,7 +28,6 @@ public class User implements Serializable {
     private String username;
 
     @Column(name = "PASSWORD")
-    @JsonIgnore
     private String password;
 
     private Short enabled;
