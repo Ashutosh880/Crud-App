@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.spring.rest.crud.annotation.Role;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.List;
 
