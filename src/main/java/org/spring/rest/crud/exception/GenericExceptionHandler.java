@@ -1,5 +1,7 @@
 package org.spring.rest.crud.exception;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.spring.rest.crud.wrapper.GenericResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -34,16 +36,23 @@ public class GenericExceptionHandler {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public Map<String, String> handleValidationException(MethodArgumentNotValidException exception) {
 
-    return exception.getBindingResult().getAllErrors().stream()
-        .collect(Collectors.toMap(key -> ((FieldError) key).getField(),
-            DefaultMessageSourceResolvable::getDefaultMessage));
+    return exception.getBindingResult().getAllErrors().stream().collect(
+        Collectors.toMap(key -> ((FieldError) key).getField(), DefaultMessageSourceResolvable::getDefaultMessage));
+  }
+
+  @ExceptionHandler
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public Map<String, String> handleConstraintValidationException(ConstraintViolationException exception) {
+
+    return exception.getConstraintViolations().stream().collect(
+        Collectors.toMap(violation -> violation.getPropertyPath().toString(), ConstraintViolation::getMessage));
   }
 
   @ExceptionHandler
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public GenericResponse handleAllTypeOfException(Exception exception, WebRequest request) {
 
-    return GenericResponse.builder().statusMsg(exception.getMessage()).statusCode(HttpStatus.NOT_FOUND.value())
+    return GenericResponse.builder().statusMsg(exception.getLocalizedMessage()).statusCode(HttpStatus.NOT_FOUND.value())
         .statusType(HttpStatus.NOT_FOUND.getReasonPhrase()).localDateTime(LocalDateTime.now())
         .description(request.getDescription(true)).build();
   }
