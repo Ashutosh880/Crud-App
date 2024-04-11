@@ -25,6 +25,7 @@ public class Authorities implements GrantedAuthority {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 
 }
