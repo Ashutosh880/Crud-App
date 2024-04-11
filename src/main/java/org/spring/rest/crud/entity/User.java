@@ -32,6 +32,7 @@ public class User{
 
     @Role(message = "should be admin and user")
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JsonManagedReference
     private List<Authorities> authorities;
 
 }
